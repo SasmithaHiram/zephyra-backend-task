@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import User from "../models/userModel.js";
+import User from "../models/User.js";
 
 const signup = async (req, res) => {
   const { username, password } = req.body;
@@ -11,7 +11,7 @@ const signup = async (req, res) => {
     if (existing)
       return res.status(400).json({ message: "User already exists" });
     const hashed = await bcrypt.hash(password, 10);
-    const user = await User.create({ username, hashed });
+    const user = await User.create({ username, password: hashed });
     res.status(201).json({ message: "User created", userId: user._id });
   } catch (error) {
     res.status(500).json({ message: "Signup error", error });
@@ -41,4 +41,4 @@ const protectedRoute = (req, res) => {
     res.status(200).json({message: 'Access to protected data granted'});
 };
 
-module.exports = {signup, signin, protectedRoute};
+exports = {signup, signin, protectedRoute};
